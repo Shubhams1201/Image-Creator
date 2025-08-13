@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Download Multiple Quiz Questions as Images</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+    .box {
+      border: 2px solid #333;
+      padding: 20px;
+      border-radius: 10px;
+      width: 400px;
+      margin-bottom: 20px;
+      background: #fff;
+    }
+    label {
+      display: block;
+      margin: 8px 0;
+    }
+    input {
+      width: 95%;
+      padding: 6px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      margin: 5px;
+      padding: 8px 12px;
+      border: none;
+      background: #007BFF;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #0056b3;
+    }
+    .correct {
+      color: green;
+      font-weight: bold;
+    }
+    #hiddenCapture {
+      display: inline-block;
+      padding: 20px;
+      border-radius: 10px;
+      background: #fff;
+      border: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+<h2>Enter Question & Options</h2>
+<div class="box">
+  <label>Question: <input type="text" id="questionInput" placeholder="Enter your question"></label>
+  <label>Option 1: <input type="text" id="opt1" placeholder="Enter option 1"></label>
+  <label>Option 2: <input type="text" id="opt2" placeholder="Enter option 2"></label>
+  <label>Option 3: <input type="text" id="opt3" placeholder="Enter option 3"></label>
+  <label>Option 4: <input type="text" id="opt4" placeholder="Enter option 4"></label>
+  <label>Correct Answer: <input type="text" id="correctAnswer" placeholder="Enter correct answer text"></label>
+</div>
+
+<h2>Download Format</h2>
+<button onclick="downloadImage('Reels')">Download as Reels</button>
+<button onclick="downloadImage('Shorts')">Download as Shorts</button>
+<button onclick="downloadImage('Clips')">Download as Clips</button>
+<button onclick="downloadImage('Videos')">Download as Videos</button>
+
+<!-- Hidden div for capture -->
+<div id="hiddenCapture" style="display:none;"></div>
+
+<!-- html2canvas library -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script>
+function downloadImage(format) {
+  let question = document.getElementById("questionInput").value;
+  let options = [
+    document.getElementById("opt1").value,
+    document.getElementById("opt2").value,
+    document.getElementById("opt3").value,
+    document.getElementById("opt4").value
+  ];
+  let correct = document.getElementById("correctAnswer").value.trim();
+
+  let hiddenBox = document.getElementById("hiddenCapture");
+  hiddenBox.innerHTML = `<h3>${question}</h3>`;
+  
+  options.forEach(opt => {
+    if (opt.trim().toLowerCase() === correct.toLowerCase()) {
+      hiddenBox.innerHTML += `<p class="correct">✔ ${opt}</p>`;
+    } else {
+      hiddenBox.innerHTML += `<p>${opt}</p>`;
+    }
+  });
+
+  hiddenBox.style.display = "inline-block";
+
+  html2canvas(hiddenBox).then(canvas => {
+    let link = document.createElement("a");
+    link.download = `${format}_Question.png`;
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+    hiddenBox.style.display = "none"; // hide again
+  });
+}
+</script>
+
+</body>
+</html>
